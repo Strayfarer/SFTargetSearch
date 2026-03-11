@@ -1,0 +1,35 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "Strayfarer | Target Search",
+	"Description": "Define query assets to search for targets matching specific conditions.",
+	"Category": "Gameplay",
+	"CreatedBy": "Strayfarer & Contributors",
+	"CreatedByURL": "https://gsoenn.com/",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "SFTargetSearch",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "SFTargetSearchTests",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	],
+	"Plugins":
+	[
+		{
+			"Name": "SFConditional",
+			"Enabled": true
+		}
+	]
+}
