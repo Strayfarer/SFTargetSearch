@@ -6,13 +6,15 @@
 	"Description": "Define query assets to search for targets matching specific conditions.",
 	"Category": "Gameplay",
 	"CreatedBy": "Strayfarer & Contributors",
-	"CreatedByURL": "https://gsoenn.com/",
-	"DocsURL": "",
+	"CreatedByURL": "https://github.com/Strayfarer/SFTargetSearch/graphs/contributors",
+	"DocsURL": "https://github.com/Strayfarer/SFTargetSearch",
 	"MarketplaceURL": "",
+	"SupportURL": "https://github.com/Strayfarer/SFTargetSearch/issues",
 	"CanContainContent": false,
 	"IsBetaVersion": false,
-	"IsExperimentalVersion": false,
+	"IsExperimentalVersion": true,
 	"Installed": false,
+	"EnabledByDefault": false,
 	"Modules": [
 		{
 			"Name": "SFTargetSearch",
