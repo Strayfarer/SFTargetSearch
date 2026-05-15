@@ -73,7 +73,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawData(APlayerController* Owner
 		return;
 
 	// retrieve cached query result
-	const FSFTargetQueryResult* QueryResult = TargetSearchSubsystem->FindCachedQueryResult(SelectedInstigator.Get(), SelectedQuery.Get());
+	const FSFTargetQueryResult* QueryResult = TargetSearchSubsystem->FindQueryResultCache(SelectedInstigator.Get(), SelectedQuery.Get());
 	if (!QueryResult)
 	{
 		CanvasContext.PrintAt(10.f, 230.f, "Failed to find cached query result for instigator x query combination.");
@@ -262,8 +262,12 @@ void FGameplayDebuggerCategory_SFTargetSearch::Input_LastInstigatorAndQuery()
 		if (!SelectedQuery.IsValid())
 			return;
 
+		const FSFQueryResultsCache* QueryResultsCache = ByInstigatorCache.Find(SelectedInstigator.Get());
+		if (!QueryResultsCache)
+			return;
+		
 		TArray<TObjectPtr<USFTargetQueryDataAsset>> Queries = {};
-		ByInstigatorCache[SelectedInstigator.Get()].Map.GenerateKeyArray(Queries);
+		QueryResultsCache->Map.GenerateKeyArray(Queries);
 		SelectedQueryIndex = Queries.IndexOfByKey(SelectedQuery);
 	}
 }

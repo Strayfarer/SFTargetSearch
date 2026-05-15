@@ -112,7 +112,7 @@ bool USFTargetSearchSubsystem::IsTargetRegistered(UObject* Target, const FGamepl
 	return false;
 }
 
-const FSFTargetQueryResult* USFTargetSearchSubsystem::FindCachedQueryResult(UObject* Instigator, USFTargetQueryDataAsset* Query) const
+const FSFTargetQueryResult* USFTargetSearchSubsystem::FindQueryResultCache(UObject* Instigator, USFTargetQueryDataAsset* Query) const
 {
 	if (!IsValid(Instigator))
 	{
@@ -123,7 +123,7 @@ const FSFTargetQueryResult* USFTargetSearchSubsystem::FindCachedQueryResult(UObj
 	const FSFQueryResultsCache* QueryResultCache = QueryResultByInstigatorCache.Find(Instigator);
 	if (!QueryResultCache)
 	{
-		UE_LOG(LogSFTargetSearch, Warning, TEXT("%hs couldn't find query result cache for instigator %s!"), __FUNCTION__, *Instigator->GetName())
+		UE_LOG(LogSFTargetSearch, VeryVerbose, TEXT("%hs couldn't find query result cache for instigator %s!"), __FUNCTION__, *Instigator->GetName())
 		return nullptr;
 	}
 

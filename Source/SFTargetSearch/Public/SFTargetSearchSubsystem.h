@@ -57,7 +57,7 @@ public:
 	
 	bool IsTargetRegistered(UObject* Target, const FGameplayTag& TargetCategory);
 	
-	const FSFTargetQueryResult* FindCachedQueryResult(UObject* Instigator, USFTargetQueryDataAsset* Query) const;
+	const FSFTargetQueryResult* FindQueryResultCache(UObject* Instigator, USFTargetQueryDataAsset* Query) const;
 
 	FORCEINLINE const TMap<TObjectPtr<UObject>, FSFQueryResultsCache>& GetQueryResultByInstigatorCache() const { return QueryResultByInstigatorCache; }
 	
