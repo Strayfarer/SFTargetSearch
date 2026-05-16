@@ -81,7 +81,7 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* Own
 	}
 	
 	// draw predicate visualizations
-	SelectedQuery->GetSearchCondition()->ForThisAndEachChildDo([this, &CanvasContext](USFConditional* Predicate)
+	SelectedQuery->GetSearchCondition()->ForThisAndEachChildDo([this, &CanvasContext](UConditional* Predicate)
 	{
 		Predicate->VisualizeWithGameplayDebugger(*this, CanvasContext);
 	});

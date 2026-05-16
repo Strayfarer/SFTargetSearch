@@ -3,7 +3,7 @@
 
 #include "TargetSearchSubsystem.h"
 
-#include "SFConditional.h"
+#include "Conditional.h"
 #include "TargetQueryDataAsset.h"
 #include "TargetSearchLog.h"
 #include "TargetSearchSettings.h"
@@ -11,7 +11,7 @@
 SF::UTargetSearchSubsystem* SF::UTargetSearchSubsystem::Get(const UObject& WorldContext)
 {
 	checkf(WorldContext.GetWorld(), TEXT("%hs expects world context to have valid world!"), __FUNCTION__)
-	return WorldContext.GetWorld()->GetSubsystem<SF::UTargetSearchSubsystem>();
+	return WorldContext.GetWorld()->GetSubsystem<UTargetSearchSubsystem>();
 }
 
 bool SF::UTargetSearchSubsystem::ShouldCreateSubsystem(UObject* Outer) const

@@ -6,12 +6,12 @@
 #include "TargetQueryDataAsset.h"
 #include "TargetSearch_MockTargetQuery.generated.h"
 
-class USFConditional;
+class SF::UConditional;
 
 /**
  * Mock target query used for testing.
  */
-UCLASS(NotBlueprintType)
+UCLASS(NotBlueprintType, Hidden)
 class UTargetSearch_MockTargetQuery : public SF::UTargetQueryDataAsset
 {
 	GENERATED_BODY()
@@ -27,7 +27,7 @@ public:
 		TargetCategory = InTargetCategory;
 	}
 
-	FORCEINLINE void SetSearchCondition(USFConditional* InSearchCondition)
+	FORCEINLINE void SetSearchCondition(SF::UConditional* InSearchCondition)
 	{
 		SearchCondition = InSearchCondition;
 	}

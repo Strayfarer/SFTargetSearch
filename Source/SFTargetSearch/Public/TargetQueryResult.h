@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SFConditionalDebugTrace.h"
-#include "SFConditionalAnswer.h"
+#include "ConditionalDebugTrace.h"
+#include "ConditionalAnswer.h"
 #include "TargetQueryResult.generated.h"
 
 namespace SF
@@ -26,7 +26,7 @@ namespace SF
 
 		/** The answer returned from evaluating with some query condition tree. */
 		UPROPERTY(BlueprintReadOnly)
-		FSFConditionalAnswer Assessment = Conditional::Answer::No();
+		FConditionalAnswer Assessment = Conditional::Answer::No();
 
 		/** Whether this candidate yielded the best assessment. */
 		UPROPERTY(BlueprintReadOnly)
@@ -34,7 +34,7 @@ namespace SF
 
 		/** The debug trace resulting from evaluation the query condition tree. */
 		UPROPERTY(BlueprintReadOnly)
-		FSFConditionalDebugTrace DebugTrace = {};
+		FConditionalDebugTrace DebugTrace = {};
 	};
 
 	/**

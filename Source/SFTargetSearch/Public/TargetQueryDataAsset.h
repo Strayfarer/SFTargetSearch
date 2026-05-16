@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SFConditional.h"
+#include "Conditional.h"
 #include "GameplayTagContainer.h"
 #include "TargetCategoryTags.h"
 #include "Engine/DataAsset.h"
@@ -33,7 +33,7 @@ namespace SF
 		FORCEINLINE FGameplayTag GetTargetCategory() const { return TargetCategory; }
 
 		/** Condition by which a target gets selected. */
-		FORCEINLINE USFConditional* GetSearchCondition() const { return SearchCondition; }
+		FORCEINLINE UConditional* GetSearchCondition() const { return SearchCondition; }
 
 	protected:
 		/** Whether the instigator with which the query is run is eligible as target. */
@@ -49,6 +49,6 @@ namespace SF
 		 * the one with highest fuzzy score will be chosen as target.
 		 */
 		UPROPERTY(EditDefaultsOnly, Instanced)
-		TObjectPtr<USFConditional> SearchCondition = nullptr;
+		TObjectPtr<UConditional> SearchCondition = nullptr;
 	};
 }

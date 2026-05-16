@@ -9,7 +9,7 @@
 /**
  * Mock actor used for testing.
  */
-UCLASS(NotBlueprintType)
+UCLASS(NotBlueprintType, Hidden)
 class ATargetSearchMockActor : public AActor
 {
 	GENERATED_BODY()

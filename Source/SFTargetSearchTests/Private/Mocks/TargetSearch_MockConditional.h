@@ -3,31 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SFConditional/Public/SFConditional.h"
-#include "TargetSearch_MockSFConditional.generated.h"
+#include "SFConditional/Public/Conditional.h"
+#include "TargetSearch_MockConditional.generated.h"
 
 /**
  * Mock conditional used for testing.
  */
-UCLASS(NotBlueprintType)
-class UTargetSearch_MockSFConditional : public USFConditional
+UCLASS(NotBlueprintType, Hidden)
+class UTargetSearch_MockConditional : public SF::UConditional
 {
 	GENERATED_BODY()
 	
 public:
-	// USFConditional
+	// UConditional
 #if WITH_EDITOR
-	virtual bool TryAddChild_Implementation(USFConditional* Child) override;
-	virtual bool TryRemoveChild_Implementation(USFConditional* Child) override;
+	virtual bool TryAddChild_Implementation(UConditional* Child) override;
+	virtual bool TryRemoveChild_Implementation(UConditional* Child) override;
 #endif
 	// --
 	
-	FSFConditionalAnswer Answer = SF::Conditional::Answer::Yes();
+	SF::FConditionalAnswer Answer = SF::Conditional::Answer::Yes();
 	
 	FInt32Range AllowedChildrenNumRange = FInt32Range(TRangeBound<int>::Inclusive(0), TRangeBound<int>::Inclusive(0));
 	
 	UPROPERTY()
-	TArray<USFConditional*> Children = {};
+	TArray<UConditional*> Children = {};
 	
 	FORCEINLINE void SetWeight(const float InWeight) { Weight = InWeight; }
 	FORCEINLINE void SetIsOptional(const bool bInIsOptional) { bIsOptional = bInIsOptional; }
@@ -35,14 +35,14 @@ public:
 	FORCEINLINE void SetDoesImpactScoreOnFail(const bool bInDoesImpactScoreOnFail) { bDoesImpactScoreOnFail = bInDoesImpactScoreOnFail; }
 	
 protected:
-	// USFConditional
-	virtual FSFConditionalAnswer EvaluateInternal_Implementation(const FSFConditionalEvaluationContext& EvaluationContext) override;
+	// UConditional
+	virtual SF::FConditionalAnswer EvaluateInternal_Implementation(const SF::FConditionalEvaluationContext& EvaluationContext) override;
 	virtual FInt32Range GetAllowedChildrenNumRange_Implementation() const override;
-	virtual TArray<USFConditional*> GetImmediateChildren_Implementation() const override;
+	virtual TArray<UConditional*> GetImmediateChildren_Implementation() const override;
 	// --
 };
 
 namespace SF::Conditional::Answer::Error
 {
-	const FSFConditionalAnswer& Mock();
+	const FConditionalAnswer& Mock();
 }
