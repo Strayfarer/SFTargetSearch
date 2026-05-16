@@ -2,13 +2,13 @@
 
 #if WITH_GAMEPLAY_DEBUGGER
 
-#include "GameplayDebuggerCategory_SFTargetSearch.h"
+#include "GameplayDebuggerCategory_TargetSearch.h"
 
 #include "Engine/Canvas.h"
-#include "SFTargetQueryDataAsset.h"
-#include "SFTargetSearchSubsystem.h"
+#include "TargetQueryDataAsset.h"
+#include "TargetSearchSubsystem.h"
 
-FGameplayDebuggerCategory_SFTargetSearch::FGameplayDebuggerCategory_SFTargetSearch()
+SF::FGameplayDebuggerCategory_TargetSearch::FGameplayDebuggerCategory_TargetSearch()
 {
 	bShowCategoryName = true;
 	bShowOnlyWithDebugActor = false;
@@ -17,43 +17,43 @@ FGameplayDebuggerCategory_SFTargetSearch::FGameplayDebuggerCategory_SFTargetSear
 		EKeys::Q.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&FGameplayDebuggerCategory_SFTargetSearch::Input_PreviousInstigator,
+		&SF::FGameplayDebuggerCategory_TargetSearch::Input_PreviousInstigator,
 		EGameplayDebuggerInputMode::Local);
 	BindKeyPress(
 		EKeys::E.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&FGameplayDebuggerCategory_SFTargetSearch::Input_NextInstigator,
+		&SF::FGameplayDebuggerCategory_TargetSearch::Input_NextInstigator,
 		EGameplayDebuggerInputMode::Local);
 
 	BindKeyPress(
 		EKeys::A.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&FGameplayDebuggerCategory_SFTargetSearch::Input_PreviousQuery,
+		&SF::FGameplayDebuggerCategory_TargetSearch::Input_PreviousQuery,
 		EGameplayDebuggerInputMode::Local);
 	BindKeyPress(
 		EKeys::D.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&FGameplayDebuggerCategory_SFTargetSearch::Input_NextQuery,
+		&SF::FGameplayDebuggerCategory_TargetSearch::Input_NextQuery,
 		EGameplayDebuggerInputMode::Local);
 	
 	BindKeyPress(
 		EKeys::W.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&FGameplayDebuggerCategory_SFTargetSearch::Input_LastInstigatorAndQuery,
+		&SF::FGameplayDebuggerCategory_TargetSearch::Input_LastInstigatorAndQuery,
 		EGameplayDebuggerInputMode::Local);
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::DrawData(APlayerController* OwnerPC,
+void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* OwnerPC,
 	FGameplayDebuggerCanvasContext& CanvasContext)
 {
 	FGameplayDebuggerCategory::DrawData(OwnerPC, CanvasContext);
 	CachedOwnerPc = OwnerPC;
 
-	const USFTargetSearchSubsystem* TargetSearchSubsystem = FindTargetSearchSubsystem();
+	const UTargetSearchSubsystem* TargetSearchSubsystem = FindTargetSearchSubsystem();
 	if (!TargetSearchSubsystem)
 	{
 		CanvasContext.PrintAt(10.f, 90.f, "No target search subsystem available for this map!");
@@ -73,7 +73,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawData(APlayerController* Owner
 		return;
 
 	// retrieve cached query result
-	const FSFTargetQueryResult* QueryResult = TargetSearchSubsystem->FindQueryResultCache(SelectedInstigator.Get(), SelectedQuery.Get());
+	const FTargetQueryResult* QueryResult = TargetSearchSubsystem->FindQueryResultCache(SelectedInstigator.Get(), SelectedQuery.Get());
 	if (!QueryResult)
 	{
 		CanvasContext.PrintAt(10.f, 230.f, "Failed to find cached query result for instigator x query combination.");
@@ -87,7 +87,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawData(APlayerController* Owner
 	});
 
 	// draw target visualizations
-	for (const FSFTargetCandidateQueryResult& ResultEntry : QueryResult->CandidateResults)
+	for (const FTargetCandidateQueryResult& ResultEntry : QueryResult->CandidateResults)
 	{
 		const AActor* CandidateAsActor = Cast<AActor>(ResultEntry.Candidate);
 		const USceneComponent* CandidateAsSceneComponent = Cast<USceneComponent>(ResultEntry.Candidate);
@@ -114,7 +114,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawData(APlayerController* Owner
 	}
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::DrawControls(FGameplayDebuggerCanvasContext& CanvasContext)
+void SF::FGameplayDebuggerCategory_TargetSearch::DrawControls(FGameplayDebuggerCanvasContext& CanvasContext)
 {
 	CanvasContext.PrintAt(10.f, 110.f, "{white}({cyan}ALT + Q/E{white})");
 	CanvasContext.PrintAt(100.f, 110.f, "{white} Previous/Next Instigator");
@@ -124,7 +124,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawControls(FGameplayDebuggerCan
 	CanvasContext.PrintAt(100.f, 150.f, "{white} Select Last Run Instigator+Query");
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::DrawSelectableInstigators(FGameplayDebuggerCanvasContext& CanvasContext) const
+void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableInstigators(FGameplayDebuggerCanvasContext& CanvasContext) const
 {
 	CanvasContext.PrintAt(10.f, 190.f, "Instigator:");
 	
@@ -155,7 +155,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawSelectableInstigators(FGamepl
 	CanvasContext.PrintAt(73.f, 190.f, SelectableInstigatorsString);
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::DrawSelectableQueries(FGameplayDebuggerCanvasContext& CanvasContext) const
+void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableQueries(FGameplayDebuggerCanvasContext& CanvasContext) const
 {
 	CanvasContext.PrintAt(10.f, 210.f, "Query:");
 	
@@ -172,7 +172,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawSelectableQueries(FGameplayDe
 		return;
 	}
 
-	TArray<TObjectPtr<USFTargetQueryDataAsset>> Queries = {};
+	TArray<TObjectPtr<UTargetQueryDataAsset>> Queries = {};
 	ByQueryCache->Map.GenerateKeyArray(Queries);
 	if (Queries.IsEmpty())
 	{
@@ -199,7 +199,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::DrawSelectableQueries(FGameplayDe
 	CanvasContext.PrintAt(73.f, 210.f, *SelectableQueriesString);
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::Input_NextInstigator()
+void SF::FGameplayDebuggerCategory_TargetSearch::Input_NextInstigator()
 {
 	auto& QueryResultsCache = TryGetQueryCacheFromTargetService();
 	SelectedInstigatorIndex++;
@@ -211,7 +211,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::Input_NextInstigator()
 	UpdateSelectionFromIndices();
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::Input_PreviousInstigator()
+void SF::FGameplayDebuggerCategory_TargetSearch::Input_PreviousInstigator()
 {
 	auto& QueryResultsCache = TryGetQueryCacheFromTargetService();
 	SelectedInstigatorIndex--;
@@ -223,7 +223,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::Input_PreviousInstigator()
 	UpdateSelectionFromIndices();
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::Input_NextQuery()
+void SF::FGameplayDebuggerCategory_TargetSearch::Input_NextQuery()
 {
 	SelectedQueryIndex++;
 	if (SelectedQueryIndex == GetCachedQueryResultNumForInstigator())
@@ -233,7 +233,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::Input_NextQuery()
 	UpdateSelectionFromIndices();
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::Input_PreviousQuery()
+void SF::FGameplayDebuggerCategory_TargetSearch::Input_PreviousQuery()
 {
 	SelectedQueryIndex--;
 	if (SelectedQueryIndex == -1)
@@ -243,7 +243,7 @@ void FGameplayDebuggerCategory_SFTargetSearch::Input_PreviousQuery()
 	UpdateSelectionFromIndices();
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::Input_LastInstigatorAndQuery()
+void SF::FGameplayDebuggerCategory_TargetSearch::Input_LastInstigatorAndQuery()
 {
 	if (const auto TargetSearchSubsystem = FindTargetSearchSubsystem())
 	{
@@ -262,27 +262,27 @@ void FGameplayDebuggerCategory_SFTargetSearch::Input_LastInstigatorAndQuery()
 		if (!SelectedQuery.IsValid())
 			return;
 
-		const FSFQueryResultsCache* QueryResultsCache = ByInstigatorCache.Find(SelectedInstigator.Get());
+		const FQueryResultsCache* QueryResultsCache = ByInstigatorCache.Find(SelectedInstigator.Get());
 		if (!QueryResultsCache)
 			return;
 		
-		TArray<TObjectPtr<USFTargetQueryDataAsset>> Queries = {};
+		TArray<TObjectPtr<UTargetQueryDataAsset>> Queries = {};
 		QueryResultsCache->Map.GenerateKeyArray(Queries);
 		SelectedQueryIndex = Queries.IndexOfByKey(SelectedQuery);
 	}
 }
 
-const TMap<TObjectPtr<UObject>, FSFQueryResultsCache>& FGameplayDebuggerCategory_SFTargetSearch::TryGetQueryCacheFromTargetService() const
+const TMap<TObjectPtr<UObject>, SF::FQueryResultsCache>& SF::FGameplayDebuggerCategory_TargetSearch::TryGetQueryCacheFromTargetService() const
 {
 	if (const auto TargetSearchSubsystem = FindTargetSearchSubsystem())
 	{
 		return TargetSearchSubsystem->GetQueryResultByInstigatorCache();
 	}
-	static TMap<TObjectPtr<UObject>, FSFQueryResultsCache> EmptyMap;
+	static TMap<TObjectPtr<UObject>, FQueryResultsCache> EmptyMap;
 	return EmptyMap;
 }
 
-uint32 FGameplayDebuggerCategory_SFTargetSearch::GetCachedQueryResultNumForInstigator() const
+uint32 SF::FGameplayDebuggerCategory_TargetSearch::GetCachedQueryResultNumForInstigator() const
 {
 	auto& ByInstigatorCache = TryGetQueryCacheFromTargetService();
 	if (SelectedInstigatorIndex < 0 || ByInstigatorCache.Num()-1 < SelectedInstigatorIndex)
@@ -294,7 +294,7 @@ uint32 FGameplayDebuggerCategory_SFTargetSearch::GetCachedQueryResultNumForInsti
 	return ByInstigatorCache[Instigators[SelectedInstigatorIndex]].Map.Num();
 }
 
-void FGameplayDebuggerCategory_SFTargetSearch::UpdateSelectionFromIndices()
+void SF::FGameplayDebuggerCategory_TargetSearch::UpdateSelectionFromIndices()
 {
 	auto& ByInstigatorCache = TryGetQueryCacheFromTargetService();
 	if (SelectedInstigatorIndex < 0 || ByInstigatorCache.Num()-1 < SelectedInstigatorIndex)
@@ -308,14 +308,14 @@ void FGameplayDebuggerCategory_SFTargetSearch::UpdateSelectionFromIndices()
 	if (SelectedQueryIndex < 0 || ByQueryCache.Num()-1 < SelectedQueryIndex)
 		return;
 	
-	TArray<TObjectPtr<USFTargetQueryDataAsset>> Queries = {};
+	TArray<TObjectPtr<UTargetQueryDataAsset>> Queries = {};
 	ByQueryCache.GenerateKeyArray(Queries);
 	SelectedQuery = Queries[SelectedQueryIndex];
 }
 
-USFTargetSearchSubsystem* FGameplayDebuggerCategory_SFTargetSearch::FindTargetSearchSubsystem() const
+SF::UTargetSearchSubsystem* SF::FGameplayDebuggerCategory_TargetSearch::FindTargetSearchSubsystem() const
 {
-	return CachedOwnerPc.IsValid() ? USFTargetSearchSubsystem::Get(*CachedOwnerPc.Get()) : nullptr;
+	return CachedOwnerPc.IsValid() ? UTargetSearchSubsystem::Get(*CachedOwnerPc.Get()) : nullptr;
 }
 
 #endif

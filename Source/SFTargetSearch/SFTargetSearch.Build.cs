@@ -7,6 +7,7 @@ public class SFTargetSearch : ModuleRules
 	public SFTargetSearch(ReadOnlyTargetRules target) : base(target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
+		bAllowUETypesInNamespaces = true;
 		
 		PublicDependencyModuleNames.AddRange([
 			"Core",

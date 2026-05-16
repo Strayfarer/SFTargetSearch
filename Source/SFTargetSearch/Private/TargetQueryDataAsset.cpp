@@ -1,13 +1,13 @@
 ﻿// Copyright Strayfarer & Contributors. Released under the MIT license.
 
 
-#include "SFTargetQueryDataAsset.h"
+#include "TargetQueryDataAsset.h"
 #if WITH_EDITOR
 #include "Misc/DataValidation.h"
 #endif
 
 #if WITH_EDITOR
-EDataValidationResult USFTargetQueryDataAsset::IsDataValid(class FDataValidationContext& Context) const
+EDataValidationResult SF::UTargetQueryDataAsset::IsDataValid(class FDataValidationContext& Context) const
 {
 	EDataValidationResult Result = Super::IsDataValid(Context);
 	if (SearchCondition)

@@ -4,4 +4,4 @@
 
 #include "CoreMinimal.h"
 
-SFTARGETSEARCH_API DECLARE_LOG_CATEGORY_EXTERN(LogSFTargetSearch, Log, All);
+SFTARGETSEARCH_API DECLARE_LOG_CATEGORY_EXTERN(LogTargetSearch, Log, All);

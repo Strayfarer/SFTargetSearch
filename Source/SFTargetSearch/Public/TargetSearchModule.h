@@ -7,7 +7,7 @@
 class FSFTargetSearchModule : public IModuleInterface
 {
 public:
-	// - IModuleInterface
+	// IModuleInterface
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 	// --

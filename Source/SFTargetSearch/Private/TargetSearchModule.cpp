@@ -1,9 +1,9 @@
 ﻿// Copyright Strayfarer & Contributors. Released under the MIT license.
 
-#include "SFTargetSearchModule.h"
+#include "TargetSearchModule.h"
 
 #include "GameplayDebugger.h"
-#include "GameplayDebugger/GameplayDebuggerCategory_SFTargetSearch.h"
+#include "GameplayDebugger/GameplayDebuggerCategory_TargetSearch.h"
 
 void FSFTargetSearchModule::StartupModule()
 {
@@ -11,8 +11,8 @@ void FSFTargetSearchModule::StartupModule()
 	if (IGameplayDebugger::IsAvailable())
 	{
 		IGameplayDebugger::Get().RegisterCategory(
-			FGameplayDebuggerCategory_SFTargetSearch::GetCategoryName(), 
-			IGameplayDebugger::FOnGetCategory::CreateStatic(&FGameplayDebuggerCategory_SFTargetSearch::MakeInstance));
+			SF::FGameplayDebuggerCategory_TargetSearch::GetCategoryName(), 
+			IGameplayDebugger::FOnGetCategory::CreateStatic(&SF::FGameplayDebuggerCategory_TargetSearch::MakeInstance));
 	}
 #endif
 }
@@ -22,7 +22,7 @@ void FSFTargetSearchModule::ShutdownModule()
 #if WITH_GAMEPLAY_DEBUGGER
 	if (IGameplayDebugger::IsAvailable())
 	{
-		IGameplayDebugger::Get().UnregisterCategory(FGameplayDebuggerCategory_SFTargetSearch::GetCategoryName());
+		IGameplayDebugger::Get().UnregisterCategory(SF::FGameplayDebuggerCategory_TargetSearch::GetCategoryName());
 	}
 #endif
 }

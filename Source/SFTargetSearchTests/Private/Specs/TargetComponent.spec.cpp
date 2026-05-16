@@ -2,17 +2,17 @@
 
 #if WITH_AUTOMATION_WORKER
 
-#include "SFTargetComponent.h"
-#include "SFTargetSearchSubsystem.h"
+#include "TargetComponent.h"
+#include "TargetSearchSubsystem.h"
 #include "Misc/AutomationTest.h"
-#include "Mocks/SFTargetSearch_MockActor.h"
+#include "Mocks/TargetSearch_MockActor.h"
 #include "TestWorld/AutomationTestWorld.h"
 
 BEGIN_DEFINE_SPEC(FTargetComponentSpec, "SF.TargetSearch.TargetComponent", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 	TSharedPtr<WeekendUtils::FScopedAutomationTestWorld> TestWorld;
 	TObjectPtr<AActor> Actor;
-	TObjectPtr<USFTargetComponent> Sut = nullptr;
-	TObjectPtr<USFTargetSearchSubsystem> TargetSearchSubsystem = nullptr;
+	TObjectPtr<SF::UTargetComponent> Sut = nullptr;
+	TObjectPtr<SF::UTargetSearchSubsystem> TargetSearchSubsystem = nullptr;
 END_DEFINE_SPEC(FTargetComponentSpec)
 
 void FTargetComponentSpec::Define()
@@ -22,7 +22,7 @@ void FTargetComponentSpec::Define()
 		TestWorld = MakeShared<WeekendUtils::FScopedAutomationTestWorld>("TestWorld");
 		TestWorld->InitializeGame();
 		
-		TargetSearchSubsystem = NewObject<USFTargetSearchSubsystem>(TestWorld->AsPtr());
+		TargetSearchSubsystem = NewObject<SF::UTargetSearchSubsystem>(TestWorld->AsPtr());
 	});
 	AfterEach([this]
 	{
@@ -32,8 +32,8 @@ void FTargetComponentSpec::Define()
 	{
 		It("should register the target component", [this]
 		{
-			Actor = TestWorld->AsRef().SpawnActorDeferred<ASFTargetSearchMockActor>(ASFTargetSearchMockActor::StaticClass(), FTransform::Identity);
-			Sut = Cast<USFTargetComponent>(Actor->AddComponentByClass(USFTargetComponent::StaticClass(), false, FTransform::Identity, true));
+			Actor = TestWorld->AsRef().SpawnActorDeferred<ATargetSearchMockActor>(ATargetSearchMockActor::StaticClass(), FTransform::Identity);
+			Sut = Cast<SF::UTargetComponent>(Actor->AddComponentByClass(SF::UTargetComponent::StaticClass(), false, FTransform::Identity, true));
 		
 			Sut->SetTargetCategory(TAG_TargetCategory);
 		
@@ -47,8 +47,8 @@ void FTargetComponentSpec::Define()
 	{
 		It("should deregister the target component", [this]
 		{
-			Actor = TestWorld->AsRef().SpawnActorDeferred<ASFTargetSearchMockActor>(ASFTargetSearchMockActor::StaticClass(), FTransform::Identity);
-			Sut = Cast<USFTargetComponent>(Actor->AddComponentByClass(USFTargetComponent::StaticClass(), false, FTransform::Identity, true));
+			Actor = TestWorld->AsRef().SpawnActorDeferred<ATargetSearchMockActor>(ATargetSearchMockActor::StaticClass(), FTransform::Identity);
+			Sut = Cast<SF::UTargetComponent>(Actor->AddComponentByClass(SF::UTargetComponent::StaticClass(), false, FTransform::Identity, true));
 		
 			Sut->SetTargetCategory(TAG_TargetCategory);
 		

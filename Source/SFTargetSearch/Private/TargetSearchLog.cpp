@@ -1,6 +1,6 @@
 ﻿// Copyright Strayfarer & Contributors. Released under the MIT license.
 
 
-#include "SFTargetSearchLog.h"
+#include "TargetSearchLog.h"
 
-DEFINE_LOG_CATEGORY(LogSFTargetSearch);
+DEFINE_LOG_CATEGORY(LogTargetSearch);

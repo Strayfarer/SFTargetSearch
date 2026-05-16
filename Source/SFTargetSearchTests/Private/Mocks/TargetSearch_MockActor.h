@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SFTargetSearch_MockActor.generated.h"
+#include "TargetSearch_MockActor.generated.h"
 
 /**
  * Mock actor used for testing.
  */
-UCLASS()
-class ASFTargetSearchMockActor : public AActor
+UCLASS(NotBlueprintType)
+class ATargetSearchMockActor : public AActor
 {
 	GENERATED_BODY()
 };
