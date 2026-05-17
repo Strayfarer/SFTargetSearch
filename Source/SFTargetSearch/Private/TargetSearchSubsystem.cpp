@@ -85,7 +85,7 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 	return Result;
 }
 
-void SF::UTargetSearchSubsystem::RegisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory)
+void SF::UTargetSearchSubsystem::RegisterTarget(UObject* PotentialTarget, const FGameplayTag TargetCategory)
 {
 	FTargetArray* TargetsForCategory = RegisteredTargetsByCategory.Find(TargetCategory);
 	if (!TargetsForCategory)
@@ -95,7 +95,7 @@ void SF::UTargetSearchSubsystem::RegisterTarget(UObject* PotentialTarget, const 
 	TargetsForCategory->Targets.AddUnique(PotentialTarget);
 }
 
-void SF::UTargetSearchSubsystem::DeregisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory)
+void SF::UTargetSearchSubsystem::DeregisterTarget(UObject* PotentialTarget, const FGameplayTag TargetCategory)
 {
 	if (FTargetArray* TargetsForQueryCategory = RegisteredTargetsByCategory.Find(TargetCategory))
 	{

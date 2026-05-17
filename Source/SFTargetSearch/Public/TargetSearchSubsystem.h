@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "TargetCategoryTags.h"
 #include "TargetQueryResult.h"
 #include "TargetSearchSubsystem.generated.h"
 
@@ -57,11 +58,11 @@ namespace SF
 
 		/** Register an object as a target candidate. */
 		UFUNCTION(BlueprintCallable)
-		void RegisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory);
+		void RegisterTarget(UObject* PotentialTarget, FGameplayTag TargetCategory);
 
 		/** Deregister an object as a target candidate. */
 		UFUNCTION(BlueprintCallable)
-		void DeregisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory);
+		void DeregisterTarget(UObject* PotentialTarget, FGameplayTag TargetCategory);
 
 		bool IsTargetRegistered(UObject* Target, const FGameplayTag& TargetCategory);
 

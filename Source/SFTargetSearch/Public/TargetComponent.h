@@ -11,9 +11,9 @@ namespace SF
 {
 	/**
 	 * A targetable point on the owning actor.
-	 * Target is (de)registered on (de)activation.
+	 * Target is (de)registered on begin/end play.
 	 */
-	UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+	UCLASS(ClassGroup="Target Search", meta=(BlueprintSpawnableComponent))
 	class SFTARGETSEARCH_API UTargetComponent : public USceneComponent
 	{
 		GENERATED_BODY()
@@ -34,6 +34,6 @@ namespace SF
 	protected:
 		/** The target category to register this component as. */
 		UPROPERTY(EditDefaultsOnly, meta=(Categories="TargetCategory"))
-		FGameplayTag TargetCategory = TAG_TargetCategory;
+		FGameplayTag TargetCategory = TAG_TARGETCATEGORY_Default;
 	};
 }

@@ -42,7 +42,7 @@ namespace SF
 
 		/** Pre-filter for targets using this target category tag. */
 		UPROPERTY(EditDefaultsOnly, meta=(Categories="TargetCategory"))
-		FGameplayTag TargetCategory = TAG_TargetCategory;
+		FGameplayTag TargetCategory = TAG_TARGETCATEGORY_Default;
 
 		/** 
 		 * Among all target candidates giving a true binary answer to this condition,
