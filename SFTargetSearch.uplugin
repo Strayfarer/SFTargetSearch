@@ -20,11 +20,6 @@
 			"Name": "SFTargetSearch",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "SFTargetSearchTests",
-			"Type": "Editor",
-			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins":
