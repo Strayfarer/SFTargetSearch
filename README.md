@@ -16,9 +16,6 @@ integration.
 > This is basically an implementation of the target search system Double Fine implemented and presented in this blog post:
 <a href="https://www.doublefine.com/news/devin-target-search">Behind The Code: Locked On Target</a>.
 
-> This plugin includes some code for scoped automation test worlds from the excellent
-<a href="https://github.com/barzb/UnrealWeekendUtils">Unreal Weekend Utils</a>.
-
 ## Table Of Contents
 
 * [Supported Engine Version](#supported-engine-version)
