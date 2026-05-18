@@ -57,14 +57,16 @@ namespace SF
 		FTargetQueryResult RunQuery(UObject* Instigator, UTargetQueryDataAsset* Query);
 
 		/** Register an object as a target candidate. */
-		UFUNCTION(BlueprintCallable)
-		void RegisterTarget(UObject* PotentialTarget, FGameplayTag TargetCategory);
+		UFUNCTION(BlueprintCallable, meta=(AutoCreateRefTerm="TargetCategory", Categories="TargetCategory", TargetCategory="TargetCategory.Default"))
+		void RegisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory);
 
 		/** Deregister an object as a target candidate. */
-		UFUNCTION(BlueprintCallable)
-		void DeregisterTarget(UObject* PotentialTarget, FGameplayTag TargetCategory);
+		UFUNCTION(BlueprintCallable, meta=(AutoCreateRefTerm="TargetCategory", Categories="TargetCategory", TargetCategory="TargetCategory.Default"))
+		void DeregisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory);
 
-		bool IsTargetRegistered(UObject* Target, const FGameplayTag& TargetCategory);
+		/** Whether the given object is registered as a target candidate under the given category. */
+		UFUNCTION(BlueprintPure, meta=(AutoCreateRefTerm="TargetCategory", Categories="TargetCategory", TargetCategory="TargetCategory.Default"))
+		bool IsTargetRegistered(UObject* Object, const FGameplayTag& TargetCategory);
 
 		const FTargetQueryResult* FindQueryResultCache(UObject* Instigator, UTargetQueryDataAsset* Query) const;
 
@@ -81,11 +83,10 @@ namespace SF
 	protected:
 		void CacheQueryResult(const FTargetQueryResult& Result);
 
-		bool TryRetrieveRelevantCandidates(UObject* Instigator, const UTargetQueryDataAsset* Query,
-		                                   TArray<UObject*>& OutCandidates);
+		bool TryRetrieveRelevantTargets(UObject* Instigator, const UTargetQueryDataAsset* Query, TArray<UObject*>& OutCandidates);
 
 		UPROPERTY()
-		TMap<FGameplayTag, FTargetArray> RegisteredTargetsByCategory = {};
+		TMap<FGameplayTag, FTargetArray> RegisteredTargetCandidates = {};
 
 		UPROPERTY()
 		TMap<TObjectPtr<UObject>, FQueryResultsCache> QueryResultByInstigatorCache = {};

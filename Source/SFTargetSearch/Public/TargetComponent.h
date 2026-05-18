@@ -34,6 +34,6 @@ namespace SF
 	protected:
 		/** The target category to register this component as. */
 		UPROPERTY(EditDefaultsOnly, meta=(Categories="TargetCategory"))
-		FGameplayTag TargetCategory = TAG_TARGETCATEGORY_Default;
+		FGameplayTag TargetCategory = TAG_TargetCategory_Default;
 	};
 }

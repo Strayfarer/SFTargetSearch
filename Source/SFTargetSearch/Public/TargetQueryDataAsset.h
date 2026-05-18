@@ -14,7 +14,7 @@ namespace SF
 	/**
 	 * Define a single, reusable query for targets using a tree of conditions.
 	 */
-	UCLASS(BlueprintType, ClassGroup="Target Search")
+	UCLASS(BlueprintType, ClassGroup="Target Search", DisplayName="Target Query")
 	class SFTARGETSEARCH_API UTargetQueryDataAsset : public UDataAsset
 	{
 		GENERATED_BODY()
@@ -42,13 +42,13 @@ namespace SF
 
 		/** Pre-filter for targets using this target category tag. */
 		UPROPERTY(EditDefaultsOnly, meta=(Categories="TargetCategory"))
-		FGameplayTag TargetCategory = TAG_TARGETCATEGORY_Default;
+		FGameplayTag TargetCategory = TAG_TargetCategory_Default;
 
 		/** 
 		 * Among all target candidates giving a true binary answer to this condition,
 		 * the one with highest fuzzy score will be chosen as target.
 		 */
-		UPROPERTY(EditDefaultsOnly, Instanced)
+		UPROPERTY(EditDefaultsOnly, Instanced, NoClear, meta=(NoResetToDefault, ForceShowPluginContent))
 		TObjectPtr<UConditional> SearchCondition = nullptr;
 	};
 }

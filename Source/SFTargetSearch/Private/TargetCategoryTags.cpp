@@ -4,4 +4,4 @@
 #include "TargetCategoryTags.h"
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_TargetCategory, "TargetCategory");
-UE_DEFINE_GAMEPLAY_TAG(TAG_TARGETCATEGORY_Default, "TargetCategory.Default");
+UE_DEFINE_GAMEPLAY_TAG(TAG_TargetCategory_Default, "TargetCategory.Default");

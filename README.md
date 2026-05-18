@@ -124,6 +124,15 @@ The returned `SF::FTargetQueryResult` holds
 ### Gameplay Debugger Integration
 
 The plugin comes with a handy gameplay debugger category which allows browsing through all latest query runs per
-query asset and instigator.
+query asset and instigator:
 
+[<p align="center"><img src="./Docs/GameplayDebugger.png"/></p>](./Docs/GameplayDebugger.png)
 
+In top left is the controls overview for cycling through query assets and instigators.
+
+Attached to each target candidate in screen space is information about the evaluation result for the candidate.
+To the left there's the overall score (in green for the best candidate), to the right there's a listing of how the 
+candidate fared against each conditional in the search condition tree of the query.
+
+Some conditionals additionally draw debug shapes. In this case the screen box conditional draws a blue box
+on the screen.

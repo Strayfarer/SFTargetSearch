@@ -23,9 +23,14 @@ bool SF::UTargetSearchSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator, UTargetQueryDataAsset* Query)
 {
-	if (!IsValid(Query))
+	if (!Instigator)
 	{
-		UE_LOG(LogTargetSearch, Error, TEXT("%hs: called with invalid query!"), __FUNCTION__)
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with invalid Instigator parameter!"), __FUNCTION__);
+		return FTargetQueryResult();
+	}
+	if (!Query)
+	{
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with invalid query!"), __FUNCTION__)
 		return FTargetQueryResult();
 	}
 	
@@ -35,7 +40,7 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 	// prepare relevant candidates, early return if there are none
 	
 	TArray<UObject*> RelevantCandidates;
-	if (!TryRetrieveRelevantCandidates(Instigator, Query, OUT RelevantCandidates))
+	if (!TryRetrieveRelevantTargets(Instigator, Query, OUT RelevantCandidates))
 	{
 		UE_LOG(LogTargetSearch, VeryVerbose, TEXT("%hs: no registered targets for category %s for query %s, returning no best candidate."), 
 			__FUNCTION__, *Query->GetTargetCategory().ToString(), *Query->GetName())
@@ -85,29 +90,62 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 	return Result;
 }
 
-void SF::UTargetSearchSubsystem::RegisterTarget(UObject* PotentialTarget, const FGameplayTag TargetCategory)
+void SF::UTargetSearchSubsystem::RegisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory)
 {
-	FTargetArray* TargetsForCategory = RegisteredTargetsByCategory.Find(TargetCategory);
+	if (!PotentialTarget)
+	{
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with invalid PotentialTarget parameter!"), __FUNCTION__);
+		return;
+	}
+	if (TargetCategory == TAG_TargetCategory || !TargetCategory.MatchesTag(TAG_TargetCategory))
+	{
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with TargetCategory parameter not being a sub-tag of 'TargetCategory'!"), __FUNCTION__);
+		return;
+	}
+	
+	FTargetArray* TargetsForCategory = RegisteredTargetCandidates.Find(TargetCategory);
 	if (!TargetsForCategory)
 	{
-		TargetsForCategory = &RegisteredTargetsByCategory.Add(TargetCategory, {});
+		TargetsForCategory = &RegisteredTargetCandidates.Add(TargetCategory, {});
 	}
 	TargetsForCategory->Targets.AddUnique(PotentialTarget);
 }
 
-void SF::UTargetSearchSubsystem::DeregisterTarget(UObject* PotentialTarget, const FGameplayTag TargetCategory)
+void SF::UTargetSearchSubsystem::DeregisterTarget(UObject* PotentialTarget, const FGameplayTag& TargetCategory)
 {
-	if (FTargetArray* TargetsForQueryCategory = RegisteredTargetsByCategory.Find(TargetCategory))
+	if (!PotentialTarget)
+	{
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with invalid PotentialTarget parameter!"), __FUNCTION__);
+		return;
+	}
+	if (TargetCategory == TAG_TargetCategory || !TargetCategory.MatchesTag(TAG_TargetCategory))
+	{
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with TargetCategory parameter not being a sub-tag of 'TargetCategory'!"), __FUNCTION__);
+		return;
+	}
+	
+	if (FTargetArray* TargetsForQueryCategory = RegisteredTargetCandidates.Find(TargetCategory))
 	{
 		TargetsForQueryCategory->Targets.Remove(PotentialTarget);
 	}
 }
 
-bool SF::UTargetSearchSubsystem::IsTargetRegistered(UObject* Target, const FGameplayTag& TargetCategory)
+bool SF::UTargetSearchSubsystem::IsTargetRegistered(UObject* Object, const FGameplayTag& TargetCategory)
 {
-	if (const FTargetArray* TargetsForQueryCategory = RegisteredTargetsByCategory.Find(TargetCategory))
+	if (!Object)
 	{
-		return TargetsForQueryCategory->Targets.Contains(Target);
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with invalid PotentialTarget parameter!"), __FUNCTION__);
+		return false;
+	}
+	if (TargetCategory == TAG_TargetCategory || !TargetCategory.MatchesTag(TAG_TargetCategory))
+	{
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with TargetCategory parameter not being a sub-tag of 'TargetCategory'!"), __FUNCTION__);
+		return false;
+	}
+	
+	if (const FTargetArray* TargetsForQueryCategory = RegisteredTargetCandidates.Find(TargetCategory))
+	{
+		return TargetsForQueryCategory->Targets.Contains(Object);
 	}
 	return false;
 }
@@ -141,18 +179,23 @@ void SF::UTargetSearchSubsystem::CacheQueryResult(const FTargetQueryResult& Resu
 	QueryResultCache->Map.Add(Result.Query, Result);
 }
 
-bool SF::UTargetSearchSubsystem::TryRetrieveRelevantCandidates(UObject* Instigator, const UTargetQueryDataAsset* Query,
+bool SF::UTargetSearchSubsystem::TryRetrieveRelevantTargets(UObject* Instigator, const UTargetQueryDataAsset* Query,
 	TArray<UObject*>& OutCandidates)
 {
-	const FTargetArray* TargetsForQueryCategory = RegisteredTargetsByCategory.Find(Query->GetTargetCategory());
-	if (!TargetsForQueryCategory)
-		return false;
-	
-	OutCandidates = TargetsForQueryCategory->Targets;
-	if (!Query->CanAcquireInstigatorAsTarget())
+	TSet<UObject*> CandidateSet{};
+	for (const TTuple<FGameplayTag, FTargetArray>& CategoryCandidatePair : RegisteredTargetCandidates)
 	{
-		OutCandidates.Remove(Instigator);
+		if (CategoryCandidatePair.Key.MatchesTag(Query->GetTargetCategory()))
+		{
+			CandidateSet.Append(CategoryCandidatePair.Value.Targets);
+		}
 	}
 	
+	if (!Query->CanAcquireInstigatorAsTarget())
+	{
+		CandidateSet.Remove(Instigator);
+	}
+	
+	OutCandidates = CandidateSet.Array();
 	return !OutCandidates.IsEmpty();
 }
