@@ -16,6 +16,8 @@ integration.
 > This is basically an implementation of the target search system Double Fine implemented and presented in this blog post:
 <a href="https://www.doublefine.com/news/devin-target-search">Behind The Code: Locked On Target</a>.
 
+> Requires the <a href="https://github.com/Strayfarer/SFConditional">SFConditional</a> plugin.
+
 ## Table Of Contents
 
 * [Supported Engine Version](#supported-engine-version)
@@ -72,8 +74,8 @@ Use `TargetCategory` in conjunction with the `TargetCategory` set on targets to 
 of candidates without evaluating the (potentially expensive) search condition.
 
 The `SearchCondition` is the core of the query: from all candidates passing the binary answer of the query
-the one with the highest fuzzy score is selected as best candidate during evaluation. See 
-<a href="https://github.com/Strayfarer/SFConditional">SFConditional GitHub</a> for an in-depth
+the one with the highest fuzzy score is selected as best candidate during evaluation. See the 
+<a href="https://github.com/Strayfarer/SFConditional">SFConditional GitHub Repository</a> for an in-depth
 how-to on conditional setup.
 
 The example below showcases a setup for an interactable target query.
