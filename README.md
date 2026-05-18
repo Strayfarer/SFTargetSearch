@@ -90,12 +90,12 @@ As target candidates need to be registered proactively to the target registry, s
 In order to mark an actor as target at a specific relative point to the actor origin, 
 you can use the scene component `SF::UTargetComponent`, which will register itself:
 
-[<p align="center"><img src="./Docs/TargetComponent.png"/></p>](./Docs/TargetComponent.png)
+[<p align="center"><img src="./Docs/TargetComponent.png" width="66%"/></p>](./Docs/TargetComponent.png)
 
 For the common use case of registering an actor as target, you can use the `SF::UTargetRegistrationComponent`
 and check `AutoRegisterOwnerActor`:
 
-[<p align="center"><img src="./Docs/TargetRegistrationComponent.png"/></p>](./Docs/TargetRegistrationComponent.png)
+[<p align="center"><img src="./Docs/TargetRegistrationComponent.png" width="66%"/></p>](./Docs/TargetRegistrationComponent.png)
 
 You can also register targets manually:
 [<p align="center"><img src="./Docs/ManualRegistration.png"/></p>](./Docs/ManualRegistration.png)
