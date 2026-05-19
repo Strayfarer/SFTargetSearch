@@ -54,7 +54,7 @@ Alternatively you can download the ZIP of this repo and place it in
 This plugin is currently in an experimental state. As of publishing, there are no known bugs. Included are
 quality of life features such as Blueprint, Gameplay Debugger and data validation support.
 It hasn't been battle-tested by me in a full-on production yet, but it got iterated already
-during a few of my private projects.
+during a few of my private projects and is unit-tested.
 
 Feel free to open new issues in the GitHub issues tab.
 Any general feedback and pull-requests are much appreciated!

@@ -5,3 +5,4 @@
 
 UE_DEFINE_GAMEPLAY_TAG(TAG_TargetCategory, "TargetCategory");
 UE_DEFINE_GAMEPLAY_TAG(TAG_TargetCategory_Default, "TargetCategory.Default");
+UE_DEFINE_GAMEPLAY_TAG(TAG_TargetCategory_Test, "TargetCategory.Test");
