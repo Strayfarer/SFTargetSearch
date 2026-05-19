@@ -87,10 +87,10 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* Own
 	});
 
 	// draw target visualizations
-	for (const FTargetCandidateQueryResult& ResultEntry : QueryResult->CandidateResults)
+	for (const FTargetCandidateQueryResult& ResultEntry : QueryResult->GetCandidateResults())
 	{
-		const AActor* CandidateAsActor = Cast<AActor>(ResultEntry.Candidate);
-		const USceneComponent* CandidateAsSceneComponent = Cast<USceneComponent>(ResultEntry.Candidate);
+		const AActor* CandidateAsActor = Cast<AActor>(ResultEntry.GetCandidate());
+		const USceneComponent* CandidateAsSceneComponent = Cast<USceneComponent>(ResultEntry.GetCandidate());
 		if (!CandidateAsActor && !CandidateAsSceneComponent)
 			continue;
 		
@@ -100,17 +100,17 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* Own
 		const FVector2D Pos2D = CanvasContext.ProjectLocation(Pos3D);
 
 		// draw summary box to the left
-		const FColor Color = ResultEntry.bIsBest
+		const FColor Color = ResultEntry.IsBest()
 			? FColor::Green
-			: ResultEntry.Assessment.GetBinaryAnswer()
+			: ResultEntry.GetAssessment().GetBinaryAnswer()
 				? FColor::Yellow
 				: FColor(128);
-		const FString SanitizedScore = FString::SanitizeFloat(FMath::TruncToFloat(ResultEntry.Assessment.GetFuzzyAnswer() * 100) / 100, 2);
+		const FString SanitizedScore = FString::SanitizeFloat(FMath::TruncToFloat(ResultEntry.GetAssessment().GetFuzzyAnswer() * 100) / 100, 2);
 		CanvasContext.Canvas->K2_DrawBox(FVector2D(Pos2D.X - 50.f, Pos2D.Y), FVector2D(41.f, 21.f), 1.f, Color);
 		CanvasContext.PrintAt(Pos2D.X - 41.f, Pos2D.Y + 3.f, Color, SanitizedScore);
 
 		// draw debug trace to the right
-		CanvasContext.PrintAt(Pos2D.X, Pos2D.Y, ResultEntry.DebugTrace.ToString());
+		CanvasContext.PrintAt(Pos2D.X, Pos2D.Y, ResultEntry.GetDebugTrace().ToString());
 	}
 }
 

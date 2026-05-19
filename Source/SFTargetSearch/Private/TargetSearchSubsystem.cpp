@@ -23,14 +23,14 @@ bool SF::UTargetSearchSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 
 SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator, UTargetQueryDataAsset* Query)
 {
-	if (!Instigator)
-	{
-		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with invalid Instigator parameter!"), __FUNCTION__);
-		return FTargetQueryResult();
-	}
 	if (!Query)
 	{
 		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with invalid query!"), __FUNCTION__)
+		return FTargetQueryResult();
+	}
+	if (!Query->GetSearchCondition())
+	{
+		UE_LOG(LogTargetSearch, Error, TEXT("%hs called with query with invalid search condition!"), __FUNCTION__)
 		return FTargetQueryResult();
 	}
 	
@@ -44,7 +44,7 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 	{
 		UE_LOG(LogTargetSearch, VeryVerbose, TEXT("%hs: no registered targets for category %s for query %s, returning no best candidate."), 
 			__FUNCTION__, *Query->GetTargetCategory().ToString(), *Query->GetName())
-		return { .Instigator = Instigator, .Query = Query, .bHasBestCandidate = false};
+		return FTargetQueryResult::MakeWithNoCandidate(Instigator, Query);
 	}
 
 	// test each relevant candidate against the search condition and find the best
@@ -58,7 +58,7 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 	
 	for (UObject* ObjectToTest : RelevantCandidates)
 	{
-		if (!IsValid(ObjectToTest))
+		if (!ObjectToTest)
 		{
 			UE_LOG(LogTargetSearch, Error, TEXT("%hs: There's a registered candidate which is not valid anymore! "
 				"Make sure you deregister targets correctly."), __FUNCTION__)
