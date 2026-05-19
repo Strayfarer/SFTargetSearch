@@ -12,8 +12,7 @@ public class SFTargetSearch : ModuleRules
 		PublicDependencyModuleNames.AddRange([
 			"Core",
 			"SFConditional",
-			"GameplayTags", 
-			"ComponentPicker"
+			"GameplayTags"
 		]);
 			
 		PrivateDependencyModuleNames.AddRange([
