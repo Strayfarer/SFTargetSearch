@@ -22,7 +22,11 @@ public:
 #endif
 	// --
 	
-	SF::FConditionalAnswer Answer = SF::Conditional::Answer::Yes();
+	SF::FConditionalAnswer AnswerTargetA = SF::Conditional::Answer::Yes();
+	SF::FConditionalAnswer AnswerTargetB = SF::Conditional::Answer::No();
+	
+	UPROPERTY()
+	TObjectPtr<UObject> TargetA = nullptr;
 	
 	FInt32Range AllowedChildrenNumRange = FInt32Range(TRangeBound<int>::Inclusive(0), TRangeBound<int>::Inclusive(0));
 	

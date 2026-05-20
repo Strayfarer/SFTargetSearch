@@ -19,7 +19,7 @@ bool UTargetSearch_MockConditional::TryRemoveChild_Implementation(UConditional* 
 SF::FConditionalAnswer UTargetSearch_MockConditional::EvaluateInternal_Implementation(
 	const SF::FConditionalEvaluationContext& EvaluationContext)
 {
-	return Answer;
+	return EvaluationContext.GetTestObject() == TargetA ? AnswerTargetA : AnswerTargetB;
 }
 
 FInt32Range UTargetSearch_MockConditional::GetAllowedChildrenNumRange_Implementation() const
