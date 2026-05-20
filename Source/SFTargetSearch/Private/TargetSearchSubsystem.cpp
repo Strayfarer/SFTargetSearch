@@ -71,7 +71,7 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 
 		if (ResultEntry.Assessment.GetBinaryAnswer())
 		{
-			if (!Result.bHasBestCandidate || ResultEntry.Assessment.GetFuzzyAnswer() > BestEntryAssessment)
+			if (!BestEntry || ResultEntry.Assessment.GetFuzzyAnswer() > BestEntryAssessment)
 			{
 				BestEntry = &ResultEntry;
 				BestEntryAssessment = ResultEntry.Assessment.GetFuzzyAnswer();
