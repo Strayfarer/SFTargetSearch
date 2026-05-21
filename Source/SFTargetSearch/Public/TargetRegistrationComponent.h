@@ -32,15 +32,15 @@ namespace SF
 
 	protected:
 		/**The target category of any target registered by this component. */
-		UPROPERTY(EditDefaultsOnly, meta=(Categories="TargetCategory"))
+		UPROPERTY(EditAnywhere, meta=(Categories="TargetCategory"))
 		FGameplayTag TargetCategory = TAG_TargetCategory_Default;
 
 		/** If true, register the owning actor as a target. */
-		UPROPERTY(EditDefaultsOnly)
+		UPROPERTY(EditAnywhere)
 		bool bAutoRegisterOwnerActor = false;
 
 		/** If true, register the owning actors root component as a target. */
-		UPROPERTY(EditDefaultsOnly)
+		UPROPERTY(EditAnywhere)
 		bool bAutoRegisterOwnerRootComponent = false;
 	};
 }
