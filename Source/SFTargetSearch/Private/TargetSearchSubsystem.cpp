@@ -58,7 +58,7 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 	
 	for (UObject* ObjectToTest : RelevantCandidates)
 	{
-		if (!ObjectToTest)
+		if (!IsValid(ObjectToTest))
 		{
 			UE_LOG(LogTargetSearch, Error, TEXT("%hs: There's a registered candidate which is not valid anymore! "
 				"Make sure you deregister targets correctly."), __FUNCTION__)
