@@ -17,33 +17,40 @@ SF::FGameplayDebuggerCategory_TargetSearch::FGameplayDebuggerCategory_TargetSear
 		EKeys::Q.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&SF::FGameplayDebuggerCategory_TargetSearch::Input_PreviousInstigator,
+		&FGameplayDebuggerCategory_TargetSearch::Input_PreviousInstigator,
 		EGameplayDebuggerInputMode::Local);
 	BindKeyPress(
 		EKeys::E.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&SF::FGameplayDebuggerCategory_TargetSearch::Input_NextInstigator,
+		&FGameplayDebuggerCategory_TargetSearch::Input_NextInstigator,
 		EGameplayDebuggerInputMode::Local);
 
 	BindKeyPress(
 		EKeys::A.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&SF::FGameplayDebuggerCategory_TargetSearch::Input_PreviousQuery,
+		&FGameplayDebuggerCategory_TargetSearch::Input_PreviousQuery,
 		EGameplayDebuggerInputMode::Local);
 	BindKeyPress(
 		EKeys::D.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&SF::FGameplayDebuggerCategory_TargetSearch::Input_NextQuery,
+		&FGameplayDebuggerCategory_TargetSearch::Input_NextQuery,
 		EGameplayDebuggerInputMode::Local);
 	
 	BindKeyPress(
 		EKeys::W.GetFName(),
 		FGameplayDebuggerInputModifier::Alt,
 		this,
-		&SF::FGameplayDebuggerCategory_TargetSearch::Input_LastInstigatorAndQuery,
+		&FGameplayDebuggerCategory_TargetSearch::Input_LastInstigatorAndQuery,
+		EGameplayDebuggerInputMode::Local);
+	
+	BindKeyPress(
+		EKeys::X.GetFName(),
+		FGameplayDebuggerInputModifier::Alt,
+		this,
+		&FGameplayDebuggerCategory_TargetSearch::Input_ToggleShowConditionalDebugTrace,
 		EGameplayDebuggerInputMode::Local);
 }
 
@@ -109,8 +116,11 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* Own
 		CanvasContext.Canvas->K2_DrawBox(FVector2D(Pos2D.X - 50.f, Pos2D.Y), FVector2D(41.f, 21.f), 1.f, Color);
 		CanvasContext.PrintAt(Pos2D.X - 41.f, Pos2D.Y + 3.f, Color, SanitizedScore);
 
-		// draw debug trace to the right
-		CanvasContext.PrintAt(Pos2D.X, Pos2D.Y, ResultEntry.GetDebugTrace().ToString());
+		if (bShowConditionalDebugTrace)
+		{
+			// draw debug trace to the right
+			CanvasContext.PrintAt(Pos2D.X, Pos2D.Y, ResultEntry.GetDebugTrace().ToString());
+		}
 	}
 }
 
@@ -122,17 +132,19 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawControls(FGameplayDebuggerC
 	CanvasContext.PrintAt(100.f, 130.f, "{white} Previous/Next Query");
 	CanvasContext.PrintAt(10.f, 150.f, "{white}({cyan}ALT + W{white})");
 	CanvasContext.PrintAt(100.f, 150.f, "{white} Select Last Run Instigator+Query");
+	CanvasContext.PrintAt(10.f, 170.f, "{white}({cyan}ALT + X{white})");
+	CanvasContext.PrintAt(100.f, 170.f, "{white} Show Target Details");
 }
 
 void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableInstigators(FGameplayDebuggerCanvasContext& CanvasContext) const
 {
-	CanvasContext.PrintAt(10.f, 190.f, "Instigator:");
+	CanvasContext.PrintAt(10.f, 210.f, "Instigator:");
 	
 	TArray<TObjectPtr<UObject>> Instigators = {};
 	TryGetQueryCacheFromTargetService().GenerateKeyArray(Instigators);
 	if (Instigators.IsEmpty())
 	{
-		CanvasContext.PrintAt(73.f, 190.f, "No instigators available.");
+		CanvasContext.PrintAt(73.f, 210.f, "No instigators available.");
 		return;
 	}
 	
@@ -152,23 +164,23 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableInstigators(FGame
 		}
 	}
 	SelectableInstigatorsString.RemoveFromEnd(", ");
-	CanvasContext.PrintAt(73.f, 190.f, SelectableInstigatorsString);
+	CanvasContext.PrintAt(73.f, 210.f, SelectableInstigatorsString);
 }
 
 void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableQueries(FGameplayDebuggerCanvasContext& CanvasContext) const
 {
-	CanvasContext.PrintAt(10.f, 210.f, "Query:");
+	CanvasContext.PrintAt(10.f, 230.f, "Query:");
 	
 	if (!SelectedInstigator.IsValid())
 	{
-		CanvasContext.PrintAt(73.f, 210.f, "No instigator selected.");
+		CanvasContext.PrintAt(73.f, 230.f, "No instigator selected.");
 		return;
 	}
 	
 	auto* ByQueryCache = TryGetQueryCacheFromTargetService().Find(SelectedInstigator.Get());
 	if (!ByQueryCache)
 	{
-		CanvasContext.PrintAt(73.f, 210.f, "No queries known of.");
+		CanvasContext.PrintAt(73.f, 230.f, "No queries known of.");
 		return;
 	}
 
@@ -176,7 +188,7 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableQueries(FGameplay
 	ByQueryCache->Map.GenerateKeyArray(Queries);
 	if (Queries.IsEmpty())
 	{
-		CanvasContext.PrintAt(73.f, 210.f, "No queries known of.");
+		CanvasContext.PrintAt(73.f, 230.f, "No queries known of.");
 		return;
 	}
 	
@@ -196,7 +208,7 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableQueries(FGameplay
 		}
 	}
 	SelectableQueriesString.RemoveFromEnd(", ");
-	CanvasContext.PrintAt(73.f, 210.f, *SelectableQueriesString);
+	CanvasContext.PrintAt(73.f, 230.f, *SelectableQueriesString);
 }
 
 void SF::FGameplayDebuggerCategory_TargetSearch::Input_NextInstigator()
@@ -270,6 +282,11 @@ void SF::FGameplayDebuggerCategory_TargetSearch::Input_LastInstigatorAndQuery()
 		QueryResultsCache->Map.GenerateKeyArray(Queries);
 		SelectedQueryIndex = Queries.IndexOfByKey(SelectedQuery);
 	}
+}
+
+void SF::FGameplayDebuggerCategory_TargetSearch::Input_ToggleShowConditionalDebugTrace()
+{
+	bShowConditionalDebugTrace = !bShowConditionalDebugTrace;
 }
 
 const TMap<TObjectPtr<UObject>, SF::FQueryResultsCache>& SF::FGameplayDebuggerCategory_TargetSearch::TryGetQueryCacheFromTargetService() const

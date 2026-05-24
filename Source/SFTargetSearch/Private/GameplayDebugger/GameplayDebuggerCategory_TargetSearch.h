@@ -39,6 +39,7 @@ namespace SF
 		void Input_NextQuery();
 		void Input_PreviousQuery();
 		void Input_LastInstigatorAndQuery();
+		void Input_ToggleShowConditionalDebugTrace();
 
 		const TMap<TObjectPtr<UObject>, FQueryResultsCache>& TryGetQueryCacheFromTargetService() const;
 		uint32 GetCachedQueryResultNumForInstigator() const;
@@ -53,6 +54,8 @@ namespace SF
 
 		int32 SelectedInstigatorIndex = 0;
 		int32 SelectedQueryIndex = 0;
+		
+		bool bShowConditionalDebugTrace = true;
 	};
 }
 
