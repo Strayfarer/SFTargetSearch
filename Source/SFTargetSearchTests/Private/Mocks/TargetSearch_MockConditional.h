@@ -17,7 +17,7 @@ class UTargetSearch_MockConditional : public SF::UConditional
 public:
 	// UConditional
 #if WITH_EDITOR
-	virtual bool TryAddChild_Implementation(UConditional* Child) override;
+	virtual void AddChild_Implementation(UConditional* Child) override;
 	virtual bool TryRemoveChild_Implementation(UConditional* Child) override;
 #endif
 	// --

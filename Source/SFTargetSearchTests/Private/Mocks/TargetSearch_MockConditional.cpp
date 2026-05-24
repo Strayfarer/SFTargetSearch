@@ -4,10 +4,9 @@
 #include "TargetSearch_MockConditional.h"
 
 #if WITH_EDITOR
-bool UTargetSearch_MockConditional::TryAddChild_Implementation(UConditional* Child)
+void UTargetSearch_MockConditional::AddChild_Implementation(UConditional* Child)
 {
 	Children.Emplace(Child);
-	return true;
 }
 
 bool UTargetSearch_MockConditional::TryRemoveChild_Implementation(UConditional* Child)
