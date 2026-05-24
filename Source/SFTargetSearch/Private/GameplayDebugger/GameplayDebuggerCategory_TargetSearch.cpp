@@ -94,7 +94,18 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* Own
 	});
 
 	// draw target visualizations
-	for (const FTargetCandidateQueryResult& ResultEntry : QueryResult->GetCandidateResults())
+	TArray<FTargetCandidateQueryResult> CandidateQueryResults = QueryResult->GetCandidateResults();
+	Algo::Sort(CandidateQueryResults, [](const FTargetCandidateQueryResult& A, const FTargetCandidateQueryResult& B)
+	{
+		if (A.GetAssessment().GetBinaryAnswer() && !B.GetAssessment().GetBinaryAnswer())
+			return false;
+		
+		if (!A.GetAssessment().GetBinaryAnswer() && B.GetAssessment().GetBinaryAnswer())
+			return true;
+		
+		return A.GetAssessment().GetFuzzyAnswer() < B.GetAssessment().GetFuzzyAnswer();
+	});
+	for (const FTargetCandidateQueryResult& ResultEntry : CandidateQueryResults)
 	{
 		const AActor* CandidateAsActor = Cast<AActor>(ResultEntry.GetCandidate());
 		const USceneComponent* CandidateAsSceneComponent = Cast<USceneComponent>(ResultEntry.GetCandidate());
