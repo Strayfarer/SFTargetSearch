@@ -25,7 +25,7 @@ namespace SF
 			return MakeShareable(new FGameplayDebuggerCategory_TargetSearch);
 		}
 
-		// - FGameplayDebuggerCategory
+		// FGameplayDebuggerCategory
 		virtual void DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext) override;
 		// --
 
@@ -34,6 +34,11 @@ namespace SF
 		void DrawSelectableInstigators(FGameplayDebuggerCanvasContext& CanvasContext) const;
 		void DrawSelectableQueries(FGameplayDebuggerCanvasContext& CanvasContext) const;
 
+		static bool TryGetEntryScreenLocation(const FGameplayDebuggerCanvasContext& CanvasContext,
+		                                      const FTargetCandidateQueryResult& ResultEntry, FVector2D& Pos2D);
+		static void DrawTargetScoreBox(FGameplayDebuggerCanvasContext& CanvasContext,
+											   const FTargetCandidateQueryResult& ResultEntry, FVector2D Pos2D);
+        
 		void Input_NextInstigator();
 		void Input_PreviousInstigator();
 		void Input_NextQuery();

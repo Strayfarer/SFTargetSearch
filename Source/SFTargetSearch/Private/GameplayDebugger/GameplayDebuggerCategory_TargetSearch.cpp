@@ -55,7 +55,7 @@ SF::FGameplayDebuggerCategory_TargetSearch::FGameplayDebuggerCategory_TargetSear
 }
 
 void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* OwnerPC,
-	FGameplayDebuggerCanvasContext& CanvasContext)
+                                                          FGameplayDebuggerCanvasContext& CanvasContext)
 {
 	FGameplayDebuggerCategory::DrawData(OwnerPC, CanvasContext);
 	CachedOwnerPc = OwnerPC;
@@ -107,29 +107,13 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* Own
 	});
 	for (const FTargetCandidateQueryResult& ResultEntry : CandidateQueryResults)
 	{
-		const AActor* CandidateAsActor = Cast<AActor>(ResultEntry.GetCandidate());
-		const USceneComponent* CandidateAsSceneComponent = Cast<USceneComponent>(ResultEntry.GetCandidate());
-		if (!CandidateAsActor && !CandidateAsSceneComponent)
+		FVector2D Pos2D;
+		if (!TryGetEntryScreenLocation(CanvasContext, ResultEntry, OUT Pos2D))
 			continue;
-		
-		const FVector Pos3D = CandidateAsActor
-			? CandidateAsActor->GetActorLocation()
-			: CandidateAsSceneComponent->GetComponentLocation();
-		const FVector2D Pos2D = CanvasContext.ProjectLocation(Pos3D);
 
-		// draw summary box to the left
-		const FColor Color = ResultEntry.IsBest()
-			? FColor::Green
-			: ResultEntry.GetAssessment().GetBinaryAnswer()
-				? FColor::Yellow
-				: FColor(128);
-		const FString SanitizedScore = FString::SanitizeFloat(FMath::TruncToFloat(ResultEntry.GetAssessment().GetFuzzyAnswer() * 100) / 100, 2);
-		CanvasContext.Canvas->K2_DrawBox(FVector2D(Pos2D.X - 50.f, Pos2D.Y), FVector2D(41.f, 21.f), 1.f, Color);
-		CanvasContext.PrintAt(Pos2D.X - 41.f, Pos2D.Y + 3.f, Color, SanitizedScore);
-
+		DrawTargetScoreBox(CanvasContext, ResultEntry, Pos2D);
 		if (bShowConditionalDebugTrace)
 		{
-			// draw debug trace to the right
 			CanvasContext.PrintAt(Pos2D.X, Pos2D.Y, ResultEntry.GetDebugTrace().ToString());
 		}
 	}
@@ -220,6 +204,69 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableQueries(FGameplay
 	}
 	SelectableQueriesString.RemoveFromEnd(", ");
 	CanvasContext.PrintAt(73.f, 230.f, *SelectableQueriesString);
+}
+
+bool SF::FGameplayDebuggerCategory_TargetSearch::TryGetEntryScreenLocation(const FGameplayDebuggerCanvasContext& CanvasContext, const FTargetCandidateQueryResult& ResultEntry, FVector2D& Pos2D)
+{
+	const AActor* CandidateAsActor = Cast<AActor>(ResultEntry.GetCandidate());
+	const USceneComponent* CandidateAsSceneComponent = Cast<USceneComponent>(ResultEntry.GetCandidate());
+	if (!CandidateAsActor && !CandidateAsSceneComponent)
+		return false;
+		
+	const FVector Pos3D = CandidateAsActor
+							  ? CandidateAsActor->GetActorLocation()
+							  : CandidateAsSceneComponent->GetComponentLocation();
+	Pos2D = CanvasContext.ProjectLocation(Pos3D);
+	return true;
+}
+
+void SF::FGameplayDebuggerCategory_TargetSearch::DrawTargetScoreBox(FGameplayDebuggerCanvasContext& CanvasContext, 
+	const FTargetCandidateQueryResult& ResultEntry, const FVector2D Pos2D)
+{
+	// compute colors
+	
+	FColor ColorBox{}, ColorFont{};
+	if (ResultEntry.GetAssessment().IsError())
+	{
+		ColorBox = FColor::Red;
+		ColorFont = FColor::White;
+	}
+	else if (ResultEntry.IsBest())
+	{
+		ColorBox = FColor::Green;
+		ColorFont = FColor::Black;
+	}
+	else if (ResultEntry.GetAssessment().GetBinaryAnswer())
+	{
+		const float Alpha = ResultEntry.GetAssessment().GetFuzzyAnswer();
+		ColorBox.R = FMath::Lerp(FColor::White.R, FColor::Green.R, Alpha);
+		ColorBox.G = FMath::Lerp(FColor::White.G, FColor::Green.G, Alpha);
+		ColorBox.B = FMath::Lerp(FColor::White.B, FColor::Green.B, Alpha);
+		ColorFont = FColor::Black;
+	}
+	else
+	{
+		ColorBox = FColorList::DarkSlateGrey;
+		ColorFont = FColor::White;
+	}
+	
+	// draw box
+	
+	if (ResultEntry.IsBest())
+	{
+		FCanvasTileItem FilledBoxBestTarget(FVector2D(Pos2D.X - 55.f, Pos2D.Y - 5.f), FVector2D(51.f, 31.f), ColorBox);
+		FilledBoxBestTarget.BlendMode = SE_BLEND_Opaque;
+		CanvasContext.Canvas->DrawItem(FilledBoxBestTarget);
+	}
+		
+	FCanvasTileItem FilledBox(FVector2D(Pos2D.X - 50.f, Pos2D.Y), FVector2D(41.f, 21.f), ColorBox);
+	FilledBox.BlendMode = SE_BLEND_Opaque;
+	CanvasContext.Canvas->DrawItem(FilledBox);
+		
+	CanvasContext.Canvas->K2_DrawBox(FVector2D(Pos2D.X - 50.f, Pos2D.Y), FVector2D(41.f, 21.f), 1.f, FColor::Black);
+		
+	const FString SanitizedScore = FString::SanitizeFloat(FMath::TruncToFloat(ResultEntry.GetAssessment().GetFuzzyAnswer() * 100) / 100, 2);
+	CanvasContext.PrintAt(Pos2D.X - 41.f, Pos2D.Y + 3.f, ColorFont, SanitizedScore);
 }
 
 void SF::FGameplayDebuggerCategory_TargetSearch::Input_NextInstigator()
