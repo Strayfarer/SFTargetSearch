@@ -27,6 +27,13 @@ namespace SF
 		FORCEINLINE const FConditionalAnswer& GetAssessment() const { return Assessment; }
 		FORCEINLINE bool IsBest() const { return bIsBest; }
 		FORCEINLINE const FConditionalDebugTrace& GetDebugTrace() const { return DebugTrace; }
+
+		bool operator==(const FTargetCandidateQueryResult& Other) const
+		{
+			return Candidate == Other.GetCandidate() 
+				&& Assessment == Other.GetAssessment() 
+				&& bIsBest == Other.bIsBest;
+		}
 		
 	private:
 		/** The candidate that was evaluated. */

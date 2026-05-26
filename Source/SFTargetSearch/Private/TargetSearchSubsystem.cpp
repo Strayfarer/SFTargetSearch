@@ -53,7 +53,8 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 	Result.Instigator = Instigator;
 	Result.Query = Query;
 	
-	FTargetCandidateQueryResult* BestEntry = nullptr;
+	bool bHasBestEntry = false;
+	FTargetCandidateQueryResult BestEntry{};
 	float BestEntryAssessment = TNumericLimits<float>::Min();
 	
 	for (UObject* ObjectToTest : RelevantCandidates)
@@ -71,19 +72,27 @@ SF::FTargetQueryResult SF::UTargetSearchSubsystem::RunQuery(UObject* Instigator,
 
 		if (ResultEntry.Assessment.GetBinaryAnswer())
 		{
-			if (!BestEntry || ResultEntry.Assessment.GetFuzzyAnswer() > BestEntryAssessment)
+			if (!bHasBestEntry || ResultEntry.Assessment.GetFuzzyAnswer() > BestEntryAssessment)
 			{
-				BestEntry = &ResultEntry;
+				bHasBestEntry = true;
+				BestEntry = ResultEntry;
 				BestEntryAssessment = ResultEntry.Assessment.GetFuzzyAnswer();
 			}
 		}
 	}
 
-	if (BestEntry)
+	if (bHasBestEntry)
 	{
-		BestEntry->bIsBest = true;
-		Result.BestCandidateResult = *BestEntry;
+		Result.BestCandidateResult = BestEntry;
+		Result.BestCandidateResult.bIsBest = true;
 		Result.bHasBestCandidate = true;
+		for (FTargetCandidateQueryResult& CandidateResult : Result.CandidateResults)
+		{
+			if (CandidateResult == BestEntry)
+			{
+				CandidateResult.bIsBest = true;
+			}
+		}
 	}
 
 	CacheQueryResult(Result);
