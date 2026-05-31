@@ -60,7 +60,7 @@ namespace SF
 		int32 SelectedInstigatorIndex = 0;
 		int32 SelectedQueryIndex = 0;
 		
-		bool bShowConditionalDebugTrace = true;
+		bool bShowConditionalDebugTrace = false;
 	};
 }
 
