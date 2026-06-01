@@ -33,6 +33,7 @@ namespace SF
 		static void DrawControls(FGameplayDebuggerCanvasContext& CanvasContext);
 		void DrawSelectableInstigators(FGameplayDebuggerCanvasContext& CanvasContext) const;
 		void DrawSelectableQueries(FGameplayDebuggerCanvasContext& CanvasContext) const;
+		void DrawTargets(FGameplayDebuggerCanvasContext& CanvasContext, const FTargetQueryResult* QueryResult);
 
 		static bool TryGetEntryScreenLocation(const FGameplayDebuggerCanvasContext& CanvasContext,
 		                                      const FTargetCandidateQueryResult& ResultEntry, FVector2D& Pos2D);

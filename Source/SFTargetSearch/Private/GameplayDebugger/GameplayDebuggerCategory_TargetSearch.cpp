@@ -88,35 +88,14 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawData(APlayerController* Own
 	}
 	
 	// draw predicate visualizations
-	SelectedQuery->GetSearchCondition()->ForThisAndEachChildDo([this, &CanvasContext](UConditional* Predicate)
+	const FConditionalEvaluationContext EvaluationContext{ nullptr, SelectedInstigator.Get() };
+	SelectedQuery->GetSearchCondition()->ForThisAndEachChildDo([this, &CanvasContext, &EvaluationContext](UConditional* Predicate)
 	{
-		Predicate->VisualizeWithGameplayDebugger(*this, CanvasContext);
+		Predicate->VisualizeWithGameplayDebugger(EvaluationContext, *this, CanvasContext);
 	});
 
 	// draw target visualizations
-	TArray<FTargetCandidateQueryResult> CandidateQueryResults = QueryResult->GetCandidateResults();
-	Algo::Sort(CandidateQueryResults, [](const FTargetCandidateQueryResult& A, const FTargetCandidateQueryResult& B)
-	{
-		if (A.GetAssessment().GetBinaryAnswer() && !B.GetAssessment().GetBinaryAnswer())
-			return false;
-		
-		if (!A.GetAssessment().GetBinaryAnswer() && B.GetAssessment().GetBinaryAnswer())
-			return true;
-		
-		return A.GetAssessment().GetFuzzyAnswer() < B.GetAssessment().GetFuzzyAnswer();
-	});
-	for (const FTargetCandidateQueryResult& ResultEntry : CandidateQueryResults)
-	{
-		FVector2D Pos2D;
-		if (!TryGetEntryScreenLocation(CanvasContext, ResultEntry, OUT Pos2D))
-			continue;
-
-		DrawTargetScoreBox(CanvasContext, ResultEntry, Pos2D);
-		if (bShowConditionalDebugTrace)
-		{
-			CanvasContext.PrintAt(Pos2D.X, Pos2D.Y, ResultEntry.GetDebugTrace().ToString());
-		}
-	}
+	DrawTargets(CanvasContext, QueryResult);
 }
 
 void SF::FGameplayDebuggerCategory_TargetSearch::DrawControls(FGameplayDebuggerCanvasContext& CanvasContext)
@@ -204,6 +183,42 @@ void SF::FGameplayDebuggerCategory_TargetSearch::DrawSelectableQueries(FGameplay
 	}
 	SelectableQueriesString.RemoveFromEnd(", ");
 	CanvasContext.PrintAt(73.f, 230.f, *SelectableQueriesString);
+}
+
+void SF::FGameplayDebuggerCategory_TargetSearch::DrawTargets(FGameplayDebuggerCanvasContext& CanvasContext, const FTargetQueryResult* QueryResult)
+{
+	// retrieve candidate results and sort them by score so best candidate is drawn on top and visible
+	TArray<FTargetCandidateQueryResult> CandidateQueryResults = QueryResult->GetCandidateResults();
+	Algo::Sort(CandidateQueryResults, [](const FTargetCandidateQueryResult& A, const FTargetCandidateQueryResult& B)
+	{
+		if (A.GetAssessment().GetBinaryAnswer() && !B.GetAssessment().GetBinaryAnswer())
+			return false;
+		
+		if (!A.GetAssessment().GetBinaryAnswer() && B.GetAssessment().GetBinaryAnswer())
+			return true;
+		
+		return A.GetAssessment().GetFuzzyAnswer() < B.GetAssessment().GetFuzzyAnswer();
+	});
+	
+	// draw stuff per candidate
+	for (const FTargetCandidateQueryResult& ResultEntry : CandidateQueryResults)
+	{
+		FVector2D Pos2D;
+		if (!TryGetEntryScreenLocation(CanvasContext, ResultEntry, OUT Pos2D))
+			continue;
+		
+		const FConditionalEvaluationContext EvaluationContext{ ResultEntry.GetCandidate(), SelectedInstigator.Get() };
+		SelectedQuery->GetSearchCondition()->ForThisAndEachChildDo([this, &CanvasContext, &EvaluationContext](UConditional* Predicate)
+		{
+			Predicate->VisualizeTestObjectWithGameplayDebugger(EvaluationContext, *this, CanvasContext);
+		});
+
+		DrawTargetScoreBox(CanvasContext, ResultEntry, Pos2D);
+		if (bShowConditionalDebugTrace)
+		{
+			CanvasContext.PrintAt(Pos2D.X, Pos2D.Y, ResultEntry.GetDebugTrace().ToString());
+		}
+	}
 }
 
 bool SF::FGameplayDebuggerCategory_TargetSearch::TryGetEntryScreenLocation(const FGameplayDebuggerCanvasContext& CanvasContext, const FTargetCandidateQueryResult& ResultEntry, FVector2D& Pos2D)
